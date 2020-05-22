@@ -110,8 +110,8 @@ def main(args=None, memo=None):
             "TRAFFIC_FILE": traffic_file,
 
             "ROTATION": True,
-            "ROTATION_INPUT": args.rotation_input,
-            "PRIORITY": args.priority,
+            "ROTATION_INPUT": False,
+            "PRIORITY": False,
             "CONFLICT_MATRIX": args.conflict_matrix,
 
             "EARLY_STOP_LOSS": args.early_stop_loss,
