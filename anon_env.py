@@ -396,14 +396,26 @@ class AnonEnv:
 
     def reset(self):
 
-        # self.eng.reset() to be implemented
-        self.eng = engine.Engine(self.dic_traffic_env_conf["INTERVAL"],
-                                 self.dic_traffic_env_conf["THREADNUM"],
-                                 self.dic_traffic_env_conf["SAVEREPLAY"],
-                                 self.dic_traffic_env_conf["RLTRAFFICLIGHT"])
-        self.load_roadnet(self.dic_traffic_env_conf["ROADNET_FILE"])
-        self.load_flow(self.dic_traffic_env_conf["TRAFFIC_FILE"])
+        cityflow_config = {
+            "interval": self.dic_traffic_env_conf["INTERVAL"],
+            "seed": 0,
+            "laneChange": False,
+            "dir": self.path_to_work_directory + "/",
+            "roadnetFile": self.dic_traffic_env_conf["ROADNET_FILE"],
+            "flowFile": self.dic_traffic_env_conf["TRAFFIC_FILE"],
+            "rlTrafficLight": self.dic_traffic_env_conf["RLTRAFFICLIGHT"],
+            "saveReplay": self.dic_traffic_env_conf["SAVEREPLAY"],
+            "roadnetLogFile": "frontend/web/roadnetLogFile.json",
+            "replayLogFile": "frontend/web/replayLogFile.txt"
+        }
+        print("=========================")
+        print(cityflow_config)
 
+        with open(os.path.join(self.path_to_work_directory, "cityflow.config"), "w") as json_file:
+            json.dump(cityflow_config, json_file)
+        self.eng = engine.Engine(os.path.join(self.path_to_work_directory, "cityflow.config"), thread_num=1)
+        # self.load_roadnet()
+        # self.load_flow()
 
         # initialize intersections (grid)
         self.list_intersection = [Intersection((i+1, j+1), self.dic_traffic_env_conf, self.eng) for i in range(self.dic_traffic_env_conf["NUM_ROW"])
@@ -587,11 +599,11 @@ class AnonEnv:
             pickle.dump(self.list_inter_log[inter_ind], f)
             f.close()
 
-        vol = get_total_traffic_volume(self.dic_traffic_env_conf["TRAFFIC_FILE"])
+        # vol = get_total_traffic_volume(self.dic_traffic_env_conf["TRAFFIC_FILE"])
         #self.eng.print_log(os.path.join("data", "frontend", "web", "roadnet_1_1.json"),
         #                         os.path.join("data", "frontend", "web", "replay_1_1_%s.txt"%vol))
-        self.eng.print_log(os.path.join(self.path_to_log, "roadnet_1_1.json"),
-                           os.path.join(self.path_to_log, "replay_1_1_%s.txt"%vol))
+        # self.eng.print_log(os.path.join(self.path_to_log, "roadnet_1_1.json"),
+        #                    os.path.join(self.path_to_log, "replay_1_1_%s.txt"%vol))
 
         #print("log files:", os.path.join("data", "frontend", "roadnet_1_1_test.json"))
 
